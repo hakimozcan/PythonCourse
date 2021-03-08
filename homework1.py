@@ -17,99 +17,108 @@ class Portfolio:
                 self.trans_lst.append(f"${format(new_cash,'.2f')} is added to the portfolio")
             else:
                 print("Cash cannot be negative.")
-            if not type(new_cash) is int:
-                raise TypeError("Only numbers are allowed")
-        except:
-            print("Please, enter a valid amount.")
+        except: # created to catch random errors like string inputs
+            print("Please, enter a valid cash amount.")
     
     def buyStock(self, share, stock):
         global stck_prc  #declared to be accessed from sellStock() method when selling the stock
         stck_prc = stock.price
         
-        if share % int(share) != 0:
-            print("Stock share cannot be fractional.")
-            return 
-        elif self.cash < share*stock.price:
-            print("Insufficient balance")
-        else:
-            self.withdrawCash(share*stock.price)
-            self.trans_lst.append(f"${share*stock.price} is spent to buy {share} share(s) of {stock.symbol}")
-            
-            if stock.symbol in self.stock_dic:
-                self.stock_dic[stock.symbol] += share
+        try:
+            if share % int(share) != 0:
+                print("Stock share cannot be fractional.")
+                return 
+            elif self.cash < share*stock.price:
+                print("Insufficient balance")
             else:
-                self.stock_dic[stock.symbol] = share
+                self.withdrawCash(share*stock.price)
+                self.trans_lst.append(f"${share*stock.price} is spent to buy {share} share(s) of {stock.symbol}")
+                
+                if stock.symbol in self.stock_dic:
+                    self.stock_dic[stock.symbol] += share
+                else:
+                    self.stock_dic[stock.symbol] = share
+        except:
+            print("Please, enter valid inputs.")
 
     def buyMutualFund(self, share, mf):
-        if self.cash < share:
-            print("Error: Insufficient balance")
-            return
-        else:
-            self.withdrawCash(share)
-            self.trans_lst.append(f"${share} is spent to buy {share} share(s) of {mf.symbol}")
-            
-            if mf.symbol in self.fund_dic:
-                self.fund_dic[mf.symbol] += share
+        try:
+            if self.cash < share:
+                print("Insufficient balance")
+                return
             else:
-                self.fund_dic[mf.symbol] = share
-        
+                self.withdrawCash(share)
+                self.trans_lst.append(f"${share} is spent to buy {share} share(s) of {mf.symbol}")
+                
+                if mf.symbol in self.fund_dic:
+                    self.fund_dic[mf.symbol] += share
+                else:
+                    self.fund_dic[mf.symbol] = share
+        except:
+            print("Please, enter valid inputs.")
+            
     def sellMutualFund(self, symbol, share):
-        p = uniform(0.9, 1.2) #generated to get a selling price for funds
-        
-        if self.fund_dic[symbol] < share:
-            print("Error: Less share available than the entry.")
-            return
-        else:
-            self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
-            self.addCash(share*p)
-            self.fund_dic[symbol] -= share
+        try:
+            p = uniform(0.9, 1.2) #generated to get a selling price for funds
+            if self.fund_dic[symbol] < share:
+                print("Less share available than the entry.")
+                return
+            else:
+                self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
+                self.addCash(share*p)
+                self.fund_dic[symbol] -= share
+        except:
+            print("Please, enter valid inputs.")
            
-    def sellStock(self, symbol, share):
-        p = uniform(0.5*stck_prc, 1.5*stck_prc) #generated to get a selling price for stocks
-        
-        if share % int(share) != 0:
-            print("Error: Stock share cannot be fractional.")
-            return
-        elif self.stock_dic[symbol] < share:
-            print("Error: Less stock share available than the entry.")
-            return 
-        else: 
-            self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
-            self.addCash(share*p)
-            self.stock_dic[symbol] -= share
+    def sellStock(self, symbol, share):  
+        try:
+            p = uniform(0.5*stck_prc, 1.5*stck_prc) #generated to get a selling price for stocks
+            if share % int(share) != 0:
+                print("Stock share cannot be fractional.")
+                return
+            elif self.stock_dic[symbol] < share:
+                print("Less stock share available than the entry.")
+                return 
+            else: 
+                self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
+                self.addCash(share*p)
+                self.stock_dic[symbol] -= share
+                
+        except:
+            print("Please, enter valid inputs.")
     
-    def withdrawCash(self, new_cash):
-    
-        if new_cash > self.cash: 
-            print("Error: Insufficient balance")
-            return
-        elif new_cash < 0:
-            print("Error: Cash cannot be negative!")
-        else: 
-            self.cash -= new_cash
-            self.trans_lst.append(f"${new_cash} is withdrawn from the portfolio")
-        
-    def history(self):
+    def withdrawCash(self, new_cash): 
+        try:    
+            if new_cash > self.cash: 
+                print("Insufficient balance")
+                return
+            elif new_cash < 0:
+                print("Cash cannot be negative!")
+            else: 
+                self.cash -= new_cash
+                self.trans_lst.append(f"${new_cash} is withdrawn from the portfolio")
+        except:
+            print("Please, enter valid inputs.")
+   
+    def history(self): #prints a list of all transactions
         for trans in self.trans_lst:
             print(trans)
         pass
             
-    def __str__(self):
-        to_print = "cash: $%s\nstock:" %format(self.cash,'.2f')
-        for key, val in self.stock_dic.items():
-            to_print += "%d %s \t  \n" %(val, key)
-        to_print+="mutual funds:"
+    def __str__(self): #prints the portfolio
+        prnt = "cash: $%s\nstock:" %format(self.cash,'.2f') #Concatenate the cash balance to prnt
+        for key, val in self.stock_dic.items():  
+            prnt += "%d %s \t  \n" %(val, key)  #Concatenate the stock share and ticker symbol to prnt
+        prnt += "mutual funds:"
         for key,val in self.fund_dic.items():
-            to_print += "%d %s \n\t\t\t  " %(val, key)
+            prnt += "%d %s \n\t\t\t  " %(val, key)  #Concatenate the fund share and ticker symbol to prnt
         
-        return to_print
+        return prnt
             
-
-class Stock:
+class Stock: 
     def __init__(self, price, symbol):
         self.price = price
         self.symbol = symbol
-
 
 class MutualFund:   
     def __init__(self, symbol):
