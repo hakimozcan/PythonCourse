@@ -6,10 +6,10 @@ class Portfolio:
     
     def __init__(self):
         self.cash = 0.00
-        self.stock_dic = {}
-        self.fund_dic = {}
+        self.stock_dic = {} #created to store stock symbol(key) and share(val) 
+        self.fund_dic = {}  #created to store mutual fund symbol(key) and share(val)
     
-    def addCash(self, new_cash):  # DO NOT FORGET NOT DEFINED ERRORS
+    def addCash(self, new_cash):
         try:
             if type(new_cash)==int or type(new_cash)==float:
                 if new_cash > 0:
@@ -18,34 +18,28 @@ class Portfolio:
                 else:
                     print("Cash cannot be negative.")
             else:
-                raise TypeError
-        except TypeError:
-            print("Please enter a number.")
+                print("Please enter a number.") 
         except:  # created to catch random errors 
             print("Please enter a valid cash amount.")
     
     def buyStock(self, share, stock):
-        
         try:
             global stck_prc  #declared to be accessed from sellStock() method when selling the stock
             stck_prc = stock.price
             
             if type(share)==int:
-                if share % int(share) != 0:
-                    raise TypeError("Stock share cannot be fractional.")
-                elif self.cash < share*stock.price:
+                if self.cash < share*stock.price:
                     print("Insufficient balance.")
                     return 
                 else:
                     self.withdrawCash(share*stock.price)
                     self.trans_lst.append(f"${share*stock.price} is spent to buy {share} share(s) of {stock.symbol}")
-                    
-                    if stock.symbol in self.stock_dic:
-                        self.stock_dic[stock.symbol] += share
+                    if stock.symbol in self.stock_dic: 
+                        self.stock_dic[stock.symbol] += share #sums up the share with the previous share
                     else:
-                        self.stock_dic[stock.symbol] = share
+                        self.stock_dic[stock.symbol] = share #creates a new symbol(key) and share(val) pair
             else:
-                print("Please enter a number for stock share.")
+                print("Please enter a whole number for stock share.")
         except AttributeError:
             print("Please enter a valid input for stock.")
         except: 
@@ -60,11 +54,10 @@ class Portfolio:
                 else:
                     self.withdrawCash(share)
                     self.trans_lst.append(f"${share} is spent to buy {share} share(s) of {mf.symbol}")
-                    
                     if mf.symbol in self.fund_dic:
-                        self.fund_dic[mf.symbol] += share
+                        self.fund_dic[mf.symbol] += share #sums up the share with the previous share
                     else:
-                        self.fund_dic[mf.symbol] = share
+                        self.fund_dic[mf.symbol] = share  #creates a new symbol(key) and share(val) pair
             else:
                 print("Please enter a number for share.")
         except AttributeError:
@@ -77,7 +70,7 @@ class Portfolio:
             if type(symbol)==str and type(share)==int or type(share)==float:  # Buys 2 shares of "GHT"
                 p = uniform(0.9, 1.2) #generated to get a selling price for funds
                 if self.fund_dic[symbol] < share:
-                    print("Less share available than the entry.")
+                    print("Insufficient share in the portfolio.")
                     return
                 else:
                     self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
@@ -89,24 +82,23 @@ class Portfolio:
             print(f"{symbol} is not available in your portfolio.")
         except:
             print("Please enter a valid ticker symbol and share.")
-
-           
+      
     def sellStock(self, symbol, share):  
         try:
             if type(symbol)==str and type(share)==int:
                 p = uniform(0.5*stck_prc, 1.5*stck_prc) #generated to get a selling price for stocks
                 
                 if self.stock_dic[symbol] < share:
-                    print("Less stock share available than the entry.")
+                    print("Insufficient stock share in the portfolio.")
                     return 
                 else: 
                     self.trans_lst.append(f"{share} share(s) of {symbol} is sold each for ${format(p,'.2f')}")
                     self.addCash(share*p)
                     self.stock_dic[symbol] -= share
             else:
-                raise TypeError("Enter a string for the first and a whole number for the second argument.")
+                print("Please enter a string for symbol and a number for share.")
         except KeyError:
-            raise (f"{symbol} is not available in your portfolio.")
+            print(f"{symbol} is not available in your portfolio.")
         except:
             print("Please enter valid inputs.")
     
@@ -123,9 +115,7 @@ class Portfolio:
                     self.cash -= new_cash
                     self.trans_lst.append(f"${new_cash} is withdrawn from the portfolio")
             else:
-                raise TypeError
-        except TypeError:
-            print("Please enter a number.")
+                print("Please enter a number.")
         except:  # created to catch random errors 
             print("Please enter a valid cash amount.")
    
@@ -160,9 +150,10 @@ class MutualFund:
             if type(symbol)==str:
                 self.symbol = symbol
             else:
-                raise TypeError("Make sure to enter a string for ticker symbol")
-        except:
-            print("Please enter a string ticker symbol.")    
+                print("Please enter a string for ticker symbol")
+        except: #created to catch potential random erros
+            print("Please enter a valid ticker symbol.")   
+    
 
 
 
