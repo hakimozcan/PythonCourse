@@ -125,12 +125,12 @@ class Portfolio:
         pass
             
     def __str__(self): #prints the portfolio
-        prnt = "cash: $%s\nstocks:\n" %format(self.cash,'.2f') #Concatenate the cash balance to prnt
+        prnt = "cash: $%s\nstocks:\n" %format(self.cash,'.2f') #Concatenates the cash balance to prnt
         for key, val in self.stock_dic.items():  
-            prnt += " %d %s\n" %(val, key)  #Concatenate the stock share and ticker symbol to prnt
+            prnt += " %d %s\n" %(val, key)  #Concatenates the stock share and ticker symbol to prnt
         prnt += "mutual funds:\n"
         for key,val in self.fund_dic.items():
-            prnt += " %d %s \n" %(val, key)  #Concatenate the fund share and ticker symbol to prnt
+            prnt += " %d %s \n" %(val, key)  #Concatenates the fund share and ticker symbol to prnt
         return prnt
             
 class Stock: 
