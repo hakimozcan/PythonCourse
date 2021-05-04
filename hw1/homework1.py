@@ -153,10 +153,3 @@ class MutualFund:
                 print("Please enter a string for ticker symbol")
         except: #created to catch potential random erros
             print("Please enter a valid ticker symbol.")   
-    
-
-
-
-
-    
-   
